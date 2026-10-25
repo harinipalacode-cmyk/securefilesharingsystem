@@ -1,4 +1,5 @@
-const API_BASE = '/api';
+const API_ORIGIN = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/+$/, '');
+const API_BASE = `${API_ORIGIN}/api`;
 
 export function getAuthToken() {
   return localStorage.getItem('secureshare_token');
@@ -124,10 +125,15 @@ export const api = {
   getSecurityMetrics: () => apiRequest('/security/metrics/'),
 
   // Audit Logs
-  getAuditLogs: (params = {}) => {
-    const query = new URLSearchParams(params).toString();
-    return apiRequest(`/audit/?${query}`);
-  },
+getAuditLogs: (params = {}) => {
+  const query = new URLSearchParams(params).toString();
+  return apiRequest(`/audit/?${query}`);
+},
+exportAuditLogs: () =>
+  apiRequest('/audit/export/', {
+    method: 'GET',
+    responseType: 'blob',
+  }),
 
   // Notifications
   getNotifications: (unreadOnly = false) => apiRequest(`/notifications/?unread=${unreadOnly}`),
